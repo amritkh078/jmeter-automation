@@ -1,0 +1,4 @@
+output/
+jmeter.log
+apache-jmeter-*/
+*.tgz

@@ -1,0 +1,76 @@
+name: JMeter API Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install JMeter
+        run: |
+          JMETER_VERSION=5.6.3
+          wget -q "https://downloads.apache.org/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz"
+          tar -xzf "apache-jmeter-${JMETER_VERSION}.tgz"
+          echo "${GITHUB_WORKSPACE}/apache-jmeter-${JMETER_VERSION}/bin" >> "$GITHUB_PATH"
+
+      - name: Run JMeter tests
+        run: |
+          rm -rf ./output/html-report ./output/results.jtl
+          mkdir -p ./output
+          jmeter -n \
+            -t PartB_API_Testing.jmx \
+            -l ./output/results.jtl \
+            -JcsvFilePath=./test_products.csv \
+            -JoutputDir=./output \
+            -e -o ./output/html-report
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jmeter-html-report
+          path: output/html-report/
+          retention-days: 14
+
+      - name: Upload JTL results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jmeter-jtl-results
+          path: output/results.jtl
+          retention-days: 14
+
+      - name: Upload transformed JSON
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: users-transformed-json
+          path: output/users_transformed.json
+          retention-days: 14
+
+      - name: Check for test failures
+        run: |
+          ERRORS=$(python3 -c "
+          import csv, sys
+          with open('output/results.jtl') as f:
+              reader = csv.DictReader(f)
+              failures = [r for r in reader if r.get('success','true').strip().lower() == 'false']
+              if failures:
+                  print(f'{len(failures)} failed sample(s):')
+                  for row in failures:
+                      print(f'  {row.get(\"label\",\"?\")} — {row.get(\"responseMessage\",\"?\")}')
+                  sys.exit(1)
+          ")

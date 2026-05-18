@@ -1,0 +1,849 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Part B - API Testing (DummyJSON)">
+      <stringProp name="TestPlan.comments">QA Assignment Part B - API Testing 
+Task 1: CSV Data Configuration
+Task 2: Data-Driven Product Creation via POST /products/add
+Task 3: Groovy Script User Data Transformation via GET /users</stringProp>
+      <boolProp name="TestPlan.serialize_threadgroups">true</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="BASE_HOST" elementType="Argument">
+            <stringProp name="Argument.name">BASE_HOST</stringProp>
+            <stringProp name="Argument.value">dummyjson.com</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">Target API hostname (no protocol)</stringProp>
+          </elementProp>
+          <elementProp name="BASE_PROTOCOL" elementType="Argument">
+            <stringProp name="Argument.name">BASE_PROTOCOL</stringProp>
+            <stringProp name="Argument.value">https</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">HTTP protocol</stringProp>
+          </elementProp>
+          <elementProp name="BASE_PORT" elementType="Argument">
+            <stringProp name="Argument.name">BASE_PORT</stringProp>
+            <stringProp name="Argument.value">443</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">HTTPS port</stringProp>
+          </elementProp>
+          <elementProp name="PRODUCTS_ENDPOINT" elementType="Argument">
+            <stringProp name="Argument.name">PRODUCTS_ENDPOINT</stringProp>
+            <stringProp name="Argument.value">/products/add</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">POST endpoint for product creation</stringProp>
+          </elementProp>
+          <elementProp name="USERS_ENDPOINT" elementType="Argument">
+            <stringProp name="Argument.name">USERS_ENDPOINT</stringProp>
+            <stringProp name="Argument.value">/users</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">GET endpoint to fetch users</stringProp>
+          </elementProp>
+          <elementProp name="EXPECTED_STATUS_POST" elementType="Argument">
+            <stringProp name="Argument.name">EXPECTED_STATUS_POST</stringProp>
+            <stringProp name="Argument.value">201</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">Expected HTTP status for POST /products/add (dummyjson returns 201 Created)</stringProp>
+          </elementProp>
+          <elementProp name="EXPECTED_STATUS_GET" elementType="Argument">
+            <stringProp name="Argument.name">EXPECTED_STATUS_GET</stringProp>
+            <stringProp name="Argument.value">200</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">Expected HTTP status for GET /users</stringProp>
+          </elementProp>
+          <elementProp name="RESPONSE_TIME_THRESHOLD_MS" elementType="Argument">
+            <stringProp name="Argument.name">RESPONSE_TIME_THRESHOLD_MS</stringProp>
+            <stringProp name="Argument.value">5000</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">Maximum acceptable API response time (ms)</stringProp>
+          </elementProp>
+          <elementProp name="THREAD_COUNT_TASK2" elementType="Argument">
+            <stringProp name="Argument.name">THREAD_COUNT_TASK2</stringProp>
+            <stringProp name="Argument.value">1</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">Concurrent users for Task 2 (1 = sequential CSV iteration)</stringProp>
+          </elementProp>
+          <elementProp name="THREAD_COUNT_TASK3" elementType="Argument">
+            <stringProp name="Argument.name">THREAD_COUNT_TASK3</stringProp>
+            <stringProp name="Argument.value">1</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">Concurrent users for Task 3</stringProp>
+          </elementProp>
+          <elementProp name="RAMP_UP_SECONDS" elementType="Argument">
+            <stringProp name="Argument.name">RAMP_UP_SECONDS</stringProp>
+            <stringProp name="Argument.value">1</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">Ramp-up period in seconds</stringProp>
+          </elementProp>
+          <elementProp name="CSV_FILE_PATH" elementType="Argument">
+            <stringProp name="Argument.name">CSV_FILE_PATH</stringProp>
+            <stringProp name="Argument.value">${__P(csvFilePath,./test_products.csv)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">Path to test_products.csv. Override: -JcsvFilePath=/abs/path</stringProp>
+          </elementProp>
+          <elementProp name="OUTPUT_DIR" elementType="Argument">
+            <stringProp name="Argument.name">OUTPUT_DIR</stringProp>
+            <stringProp name="Argument.value">${__P(outputDir,./output)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">Output directory for JSON results. Override: -JoutputDir=/abs/path</stringProp>
+          </elementProp>
+          <elementProp name="CONTENT_TYPE" elementType="Argument">
+            <stringProp name="Argument.name">CONTENT_TYPE</stringProp>
+            <stringProp name="Argument.value">application/json</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">HTTP Content-Type header value</stringProp>
+          </elementProp>
+          <elementProp name="CONNECTION_TIMEOUT_MS" elementType="Argument">
+            <stringProp name="Argument.name">CONNECTION_TIMEOUT_MS</stringProp>
+            <stringProp name="Argument.value">10000</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">HTTP connection timeout (ms)</stringProp>
+          </elementProp>
+          <elementProp name="SOCKET_TIMEOUT_MS" elementType="Argument">
+            <stringProp name="Argument.name">SOCKET_TIMEOUT_MS</stringProp>
+            <stringProp name="Argument.value">30000</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">HTTP socket/read timeout (ms)</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+    </TestPlan>
+    <hashTree>
+      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults">
+        <stringProp name="HTTPSampler.connect_timeout">${CONNECTION_TIMEOUT_MS}</stringProp>
+        <stringProp name="HTTPSampler.response_timeout">${SOCKET_TIMEOUT_MS}</stringProp>
+        <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
+        <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
+        <stringProp name="HTTPSampler.protocol">${BASE_PROTOCOL}</stringProp>
+        <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+        <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+          <collectionProp name="Arguments.arguments"/>
+        </elementProp>
+        <stringProp name="HTTPSampler.implementation"></stringProp>
+      </ConfigTestElement>
+      <hashTree/>
+      <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie Manager" enabled="true">
+        <collectionProp name="CookieManager.cookies"/>
+        <boolProp name="CookieManager.clearEachIteration">true</boolProp>
+        <boolProp name="CookieManager.controlledByThreadGroup">false</boolProp>
+      </CookieManager>
+      <hashTree/>
+      <CacheManager guiclass="CacheManagerGui" testclass="CacheManager" testname="HTTP Cache Manager" enabled="true">
+        <boolProp name="clearEachIteration">true</boolProp>
+        <boolProp name="useExpires">true</boolProp>
+        <boolProp name="CacheManager.controlledByThread">false</boolProp>
+      </CacheManager>
+      <hashTree/>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Task 2 - Data-Driven Product Creation (POST /products/add)" enabled="true">
+        <stringProp name="ThreadGroup.num_threads">${THREAD_COUNT_TASK2}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${RAMP_UP_SECONDS}</stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <intProp name="LoopController.loops">-1</intProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree>
+        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Task 1 - CSV Data Set: test_products.csv" enabled="true">
+          <stringProp name="filename">${CSV_FILE_PATH}</stringProp>
+          <stringProp name="fileEncoding">UTF-8</stringProp>
+          <stringProp name="variableNames">title,price,description,category</stringProp>
+          <boolProp name="ignoreFirstLine">true</boolProp>
+          <stringProp name="delimiter">,</stringProp>
+          <boolProp name="quotedData">false</boolProp>
+          <boolProp name="recycle">false</boolProp>
+          <boolProp name="stopThread">true</boolProp>
+          <stringProp name="shareMode">shareMode.all</stringProp>
+        </CSVDataSet>
+        <hashTree/>
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager - Task 2 (JSON)" enabled="true">
+          <collectionProp name="HeaderManager.headers">
+            <elementProp name="Content-Type" elementType="Header">
+              <stringProp name="Header.name">Content-Type</stringProp>
+              <stringProp name="Header.value">${CONTENT_TYPE}</stringProp>
+            </elementProp>
+            <elementProp name="Accept" elementType="Header">
+              <stringProp name="Header.name">Accept</stringProp>
+              <stringProp name="Header.value">application/json</stringProp>
+            </elementProp>
+            <elementProp name="X-Test-Iteration" elementType="Header">
+              <stringProp name="Header.name">X-Test-Iteration</stringProp>
+              <stringProp name="Header.value">${__threadNum}-${__iterationNum()}</stringProp>
+            </elementProp>
+          </collectionProp>
+        </HeaderManager>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /products/add - Create Product [${title}]">
+          <stringProp name="HTTPSampler.path">${PRODUCTS_ENDPOINT}</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">${REQUEST_BODY}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - Build Product Request Body from CSV" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+import groovy.json.JsonOutput
+
+// Read CSV-populated JMeter variables
+def title       = vars.get(&quot;title&quot;)?.trim()
+def priceStr    = vars.get(&quot;price&quot;)?.trim()
+def description = vars.get(&quot;description&quot;)?.trim()
+def category    = vars.get(&quot;category&quot;)?.trim()
+
+if (!title || title == &quot;title&quot;) {
+    log.warn(&quot;[PreProcessor] Skipping empty/header CSV row&quot;)
+    vars.put(&quot;SKIP_REQUEST&quot;, &quot;true&quot;)
+    return
+}
+vars.put(&quot;SKIP_REQUEST&quot;, &quot;false&quot;)
+
+
+def priceValue
+try {
+    priceValue = priceStr.toDouble()
+} catch (Exception e) {
+    log.error(&quot;[PreProcessor] Invalid price in CSV: &quot; + priceStr)
+    vars.put(&quot;SKIP_REQUEST&quot;, &quot;true&quot;)
+    return
+}
+
+
+def payload = [
+    title      : title,
+    price      : priceValue,
+    description: description,
+    category   : category,
+    images     : [&quot;https://cdn.dummyjson.com/products/images/placeholder.png&quot;]
+]
+
+def requestBody = JsonOutput.toJson(payload)
+vars.put(&quot;REQUEST_BODY&quot;, requestBody)
+
+
+log.info(&quot;=== [Task 2 PreProcessor] ===&quot;)
+log.info(&quot;CSV Row  -&gt; title: &quot; + title + &quot; | price: &quot; + priceStr + &quot; | category: &quot; + category)
+log.info(&quot;Request Body: &quot; + requestBody)
+            </stringProp>
+          </JSR223PreProcessor>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert 1: HTTP Status Code is 201 Created" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49587">201</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">FAIL: Expected HTTP 201 Created for product &quot;${title}&quot; but received a different status</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert 2: Response contains &apos;id&apos; field (product created)" enabled="true">
+            <stringProp name="JSON_PATH">$.id</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+            <stringProp name="Assertion.custom_message">FAIL: Response must contain &apos;id&apos; field indicating a product was created</stringProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert 3: Response title matches CSV input [${title}]" enabled="true">
+            <stringProp name="JSON_PATH">$.title</stringProp>
+            <stringProp name="EXPECTED_VALUE">${title}</stringProp>
+            <boolProp name="JSONVALIDATION">true</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+            <stringProp name="Assertion.custom_message">FAIL: Response title does not match CSV value &quot;${title}&quot;</stringProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert 4: Response category matches CSV input [${category}]" enabled="true">
+            <stringProp name="JSON_PATH">$.category</stringProp>
+            <stringProp name="EXPECTED_VALUE">${category}</stringProp>
+            <boolProp name="JSONVALIDATION">true</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+            <stringProp name="Assertion.custom_message">FAIL: Response category does not match CSV value &quot;${category}&quot;</stringProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="Assert 5: Response price matches CSV input (numeric comparison)" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+import groovy.json.JsonSlurper
+
+def responseBody = prev.getResponseDataAsString()
+if (!responseBody) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage(&quot;Response body is empty — cannot validate price&quot;)
+    return
+}
+
+def json = new JsonSlurper().parseText(responseBody)
+def expectedPriceStr = vars.get(&quot;price&quot;)
+def actualPrice      = json.price
+
+if (expectedPriceStr == null || actualPrice == null) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage(&quot;Price fields missing: expected=&quot; + expectedPriceStr + &quot;, actual=&quot; + actualPrice)
+    return
+}
+
+def expectedPrice = expectedPriceStr.toDouble()
+def actualPriceD  = (actualPrice instanceof Number) ? (actualPrice as double) : actualPrice.toString().toDouble()
+def diff          = Math.abs(actualPriceD - expectedPrice)
+
+if (diff &gt; 0.001) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage(&quot;Price mismatch: expected=&quot; + expectedPrice + &quot;, actual=&quot; + actualPriceD)
+} else {
+    AssertionResult.setFailure(false)
+    log.info(&quot;[Assert 5] Price PASSED: &quot; + actualPriceD + &quot; == expected &quot; + expectedPrice)
+}
+            </stringProp>
+          </JSR223Assertion>
+          <hashTree/>
+          <DurationAssertion guiclass="DurationAssertionGui" testclass="DurationAssertion" testname="Assert 6: Response Time within ${RESPONSE_TIME_THRESHOLD_MS}ms SLA" enabled="true">
+            <stringProp name="DurationAssertion.duration">${RESPONSE_TIME_THRESHOLD_MS}</stringProp>
+          </DurationAssertion>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert 7: Response body is a JSON object">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="2975">\{</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">FAIL: Response body is not a JSON object (expected to start with &apos;{&apos;)</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">2</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor - Capture Created Product ID">
+            <stringProp name="JSONPostProcessor.referenceNames">CREATED_PRODUCT_ID</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.id</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">ID_NOT_FOUND</stringProp>
+          </JSONPostProcessor>
+          <hashTree/>
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor - Log and Validate Product Response">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">import groovy.json.JsonSlurper
+
+def responseCode = prev.getResponseCode()
+def responseTime = prev.getTime()
+def responseBody = prev.getResponseDataAsString()
+def csvTitle     = vars.get(&quot;title&quot;)
+
+log.info(&quot;=== [Task 2 PostProcessor] ===&quot;)
+log.info(&quot;Product: &quot; + csvTitle + &quot; | HTTP: &quot; + responseCode + &quot; | Time: &quot; + responseTime + &quot;ms&quot;)
+
+if ((responseCode == &quot;200&quot; || responseCode == &quot;201&quot;) &amp;&amp; responseBody) {
+    def json = new JsonSlurper().parseText(responseBody)
+
+    log.info(&quot;Created Product ID	: &quot; + json.id)
+    log.info(&quot;Echoed Title 		: &quot; + json.title)
+    log.info(&quot;Echoed Price         : &quot; + json.price)
+    log.info(&quot;Echoed Category      : &quot; + json.category)
+    log.info(&quot;Echoed Description   : &quot; + json.description)
+
+
+    vars.put(&quot;LAST_CREATED_PRODUCT_ID&quot;, json.id?.toString() ?: &quot;N/A&quot;)
+
+    // Validate price is returned as a Number type
+    if (json.price instanceof Number) {
+        log.info(&quot;Price type check PASSED: &quot; + json.price + &quot; is numeric&quot;)
+    } else {
+        log.warn(&quot;Price type check WARNING: returned as &quot; + json.price?.getClass()?.simpleName)
+    }
+
+    log.info(&quot;=== [Task 2 PostProcessor END] ===&quot;)
+} else {
+    log.error(&quot;[Task 2 PostProcessor] UNEXPECTED status for product &apos;&quot; + csvTitle + &quot;&apos;: HTTP &quot; + responseCode + &quot; (expected 200 or 201)&quot;)
+    log.error(&quot;Response body: &quot; + responseBody)
+}
+            </stringProp>
+          </JSR223PostProcessor>
+          <hashTree/>
+        </hashTree>
+        <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="Debug Sampler - Task 2: Inspect All JMeter Variables">
+          <boolProp name="displayJMeterProperties">false</boolProp>
+          <boolProp name="displayJMeterVariables">true</boolProp>
+          <boolProp name="displaySystemProperties">false</boolProp>
+        </DebugSampler>
+        <hashTree/>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree - Task 2 (Product Creation)">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>true</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report - Task 2" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>true</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report - Task 2" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>true</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Task 3 - User Data Transformation (GET /users + Groovy)">
+        <stringProp name="ThreadGroup.num_threads">${THREAD_COUNT_TASK3}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${RAMP_UP_SECONDS}</stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <stringProp name="LoopController.loops">1</stringProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree>
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager - Task 3 (Accept JSON)">
+          <collectionProp name="HeaderManager.headers">
+            <elementProp name="Accept" elementType="Header">
+              <stringProp name="Header.name">Accept</stringProp>
+              <stringProp name="Header.value">application/json</stringProp>
+            </elementProp>
+            <elementProp name="X-Test-Task" elementType="Header">
+              <stringProp name="Header.name">X-Test-Task</stringProp>
+              <stringProp name="Header.value">Task3-UserTransformation</stringProp>
+            </elementProp>
+          </collectionProp>
+        </HeaderManager>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /users - Fetch User List for Transformation">
+          <stringProp name="HTTPSampler.path">${USERS_ENDPOINT}</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - Initialise Output Directory">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+def outputDirPath = vars.get(&quot;OUTPUT_DIR&quot;) ?: &quot;./output&quot;
+def dir = new File(outputDirPath)
+
+if (!dir.exists()) {
+    boolean created = dir.mkdirs()
+    log.info(&quot;[Task 3 PreProcessor] Created output directory: &quot; + dir.absolutePath + &quot; (success=&quot; + created + &quot;)&quot;)
+} else {
+    log.info(&quot;[Task 3 PreProcessor] Output directory exists: &quot; + dir.absolutePath)
+}
+
+// Store resolved absolute path for PostProcessor to use
+vars.put(&quot;OUTPUT_DIR_ABS&quot;, dir.absolutePath)
+log.info(&quot;[Task 3 PreProcessor] OUTPUT_DIR_ABS = &quot; + dir.absolutePath)
+            </stringProp>
+          </JSR223PreProcessor>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert 1: GET /users returns HTTP 200" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">FAIL: GET /users must return HTTP 200</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert 2: Response contains &apos;users&apos; array" enabled="true">
+            <stringProp name="JSON_PATH">$.users</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+            <stringProp name="Assertion.custom_message">FAIL: Response must contain a &apos;users&apos; array</stringProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert 3: Response has at least 10 users (index 9 exists)" enabled="true">
+            <stringProp name="JSON_PATH">$.users[9]</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+            <stringProp name="Assertion.custom_message">FAIL: Response must contain at least 10 users to process</stringProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert 4: Response contains &apos;total&apos; metadata field" enabled="true">
+            <stringProp name="JSON_PATH">$.total</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+            <stringProp name="Assertion.custom_message">FAIL: Response must contain &apos;total&apos; field</stringProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert 5: First user object has &apos;email&apos; field">
+            <stringProp name="JSON_PATH">$.users[0].email</stringProp>
+            <stringProp name="EXPECTED_VALUE"></stringProp>
+            <boolProp name="JSONVALIDATION">false</boolProp>
+            <boolProp name="EXPECT_NULL">false</boolProp>
+            <boolProp name="INVERT">false</boolProp>
+            <boolProp name="ISREGEX">false</boolProp>
+            <stringProp name="Assertion.custom_message">FAIL: First user must have an &apos;email&apos; field</stringProp>
+          </JSONPathAssertion>
+          <hashTree/>
+          <DurationAssertion guiclass="DurationAssertionGui" testclass="DurationAssertion" testname="Assert 6: Response Time within ${RESPONSE_TIME_THRESHOLD_MS}ms SLA">
+            <stringProp name="DurationAssertion.duration">${RESPONSE_TIME_THRESHOLD_MS}</stringProp>
+          </DurationAssertion>
+          <hashTree/>
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor - User Data Transformation (Groovy)">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">
+import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
+def responseCode = prev.getResponseCode()
+def responseBody = prev.getResponseDataAsString()
+
+if (responseCode != &quot;200&quot; || !responseBody) {
+    log.error(&quot;[Task 3 PostProcessor] Cannot transform: HTTP &quot; + responseCode)
+    vars.put(&quot;TRANSFORMATION_STATUS&quot;, &quot;FAILED&quot;)
+    return
+}
+
+// Parse full response
+def data     = new JsonSlurper().parseText(responseBody)
+def allUsers = data.users
+
+def users      = allUsers.take(10)
+def totalUsers = users.size()
+
+
+def totalAge = 0
+users.each { u -&gt; totalAge += (u.age ?: 0) }
+def avgAge = Math.round((totalAge / totalUsers) * 10) / 10.0
+
+def genderDist = [:]
+users.each { u -&gt;
+    def g = u.gender?.toLowerCase() ?: &quot;unknown&quot;
+    genderDist[g] = (genderDist.containsKey(g) ? genderDist[g] : 0) + 1
+}
+def deptDist = [:]
+users.each { u -&gt;
+    def dept = u.company?.department ?: &quot;Unknown&quot;
+    deptDist[dept] = (deptDist.containsKey(dept) ? deptDist[dept] : 0) + 1
+}
+
+def transformedUsers = users.collect { u -&gt;
+    [
+        id        : u.id,
+        fullName  : (u.firstName ?: &quot;&quot;) + &quot; &quot; + (u.lastName ?: &quot;&quot;),
+        email     : u.email,
+        age       : u.age,
+        gender    : u.gender,
+        city      : u.address?.city,
+        state     : u.address?.state,
+        country   : u.address?.country,
+        company   : u.company?.name,
+        department: u.company?.department,
+        jobTitle  : u.company?.title
+    ]
+}
+
+def transformedAt = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+
+def output = [
+    metadata: [
+        totalUsers            : totalUsers,
+        averageAge            : avgAge,
+        genderDistribution    : genderDist,
+        departmentDistribution: deptDist,
+        transformedAt         : transformedAt
+    ],
+    users: transformedUsers
+]
+
+
+def outputDirAbs = vars.get(&quot;OUTPUT_DIR_ABS&quot;) ?: vars.get(&quot;OUTPUT_DIR&quot;) ?: &quot;./output&quot;
+def outputFile   = new File(outputDirAbs + &quot;/users_transformed.json&quot;)
+outputFile.parentFile?.mkdirs()
+outputFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(output))
+
+vars.put(&quot;TRANSFORMATION_STATUS&quot;,    &quot;SUCCESS&quot;)
+vars.put(&quot;TOTAL_USERS_PROCESSED&quot;,    totalUsers.toString())
+vars.put(&quot;AVERAGE_AGE&quot;,              avgAge.toString())
+vars.put(&quot;OUTPUT_FILE_PATH&quot;,         outputFile.absolutePath)
+vars.put(&quot;GENDER_DISTRIBUTION&quot;,      genderDist.toString())
+vars.put(&quot;DEPT_DISTRIBUTION&quot;,        deptDist.toString())
+
+def sep = &quot;=&quot; * 60
+
+
+log.info(sep)
+log.info(&quot;USER DATA TRANSFORMATION COMPLETED&quot;)
+log.info(sep)
+log.info(&quot;Total Users Processed: &quot; + totalUsers)
+log.info(&quot;Average Age: &quot; + avgAge + &quot; years&quot;)
+log.info(&quot;Gender Distribution: &quot; + genderDist)
+log.info(&quot;Department Distribution: &quot; + deptDist)
+log.info(&quot;Output saved to: &quot; + outputFile.absolutePath)
+log.info(sep)
+
+println(sep)
+println(&quot;USER DATA TRANSFORMATION COMPLETED&quot;)
+println(sep)
+println(&quot;Total Users Processed: &quot; + totalUsers)
+println(&quot;Average Age: &quot; + avgAge + &quot; years&quot;)
+println(&quot;Gender Distribution: &quot; + genderDist)
+println(&quot;Department Distribution: &quot; + deptDist)
+println(&quot;Output saved to: &quot; + outputFile.absolutePath)
+println(sep)
+            </stringProp>
+          </JSR223PostProcessor>
+          <hashTree/>
+        </hashTree>
+        <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="Debug Sampler">
+          <boolProp name="displayJMeterProperties">false</boolProp>
+          <boolProp name="displayJMeterVariables">true</boolProp>
+          <boolProp name="displaySystemProperties">false</boolProp>
+        </DebugSampler>
+        <hashTree/>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree - Task 3 (User Transformation)">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>true</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report - Task 3">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>true</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report - Task 3" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>true</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
